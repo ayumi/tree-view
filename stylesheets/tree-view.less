@@ -2,32 +2,34 @@
 
 .tree-view-resizer {
   position: relative;
-  height: 100%;
+  width: 100%;
   overflow: hidden;
   cursor: default;
   -webkit-user-select: none;
-  min-width: 100px;
-  width: 200px;
+  min-height: 50px;
+  height: 480px;
   z-index: 2;
 
   .tree-view-resize-handle {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 10px;
-    cursor: col-resize;
+    left: 0;
+    right: 0;
+    height: 10px;
     z-index: 3;
   }
 
   &[data-show-on-right-side='true'] {
+    width: 100%;
     .tree-view-resize-handle {
-      left: -5px;
+      top: -5px;
+      cursor: row-resize;
     }
   }
 
   &[data-show-on-right-side='false'] {
     .tree-view-resize-handle {
       right: -5px;
+      cursor: col-resize;
     }
   }
 }
@@ -39,8 +41,8 @@
 }
 
 .tree-view {
-  min-width: -webkit-min-content;
-  min-height: 100%;
+  min-width: 100%;
+  min-height: 480px;
   padding-left: @component-icon-padding;
   padding-right: @component-padding;
   position: relative;
