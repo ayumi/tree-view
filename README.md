@@ -1,10 +1,12 @@
-# Tree View package [![Build Status](https://travis-ci.org/atom/tree-view.svg?branch=master)](https://travis-ci.org/atom/tree-view)
+# Tree View Bottom package
 
 Explore and open files in the current project.
+
+Hacked to display on bottom because that's cool.
 
 Press `cmd-\` to open/close the Tree view and `ctrl-0` to focus it.
 
 When the Tree view has focus you can press `a`, `m`, or `delete` to add, move
 or delete files and folders.
 
-![](https://f.cloud.github.com/assets/671378/2241932/6d9cface-9ceb-11e3-9026-31d5011d889d.png)
+![](https://cloud.githubusercontent.com/assets/521861/4510963/c06835f0-4b2f-11e4-94d5-173d9982e760.png)
