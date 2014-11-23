@@ -8,6 +8,7 @@ fs = require 'fs-plus'
 AddDialog = null  # Defer requiring until actually needed
 MoveDialog = null # Defer requiring until actually needed
 CopyDialog = null # Defer requiring until actually needed
+Minimatch = null  # Defer requiring until actually needed
 
 Directory = require './directory'
 DirectoryView = require './directory-view'
@@ -30,6 +31,7 @@ class TreeView extends ScrollView
     @scrollLeftAfterAttach = -1
     @scrollTopAfterAttach = -1
     @selectedPath = null
+    @ignoredPatterns = []
 
     @handleEvents()
 
@@ -73,6 +75,9 @@ class TreeView extends ScrollView
     @on 'dblclick', '.tree-view-resize-handle', =>
       @resizeToFitContent()
     @on 'click', '.entry', (e) =>
+      # This prevents accidental collapsing when a .entries element is the event target
+      return if e.target.classList.contains('entries')
+
       @entryClicked(e) unless e.shiftKey or e.metaKey or e.ctrlKey
     @on 'mousedown', '.entry', (e) =>
       @onMouseDown(e)
@@ -205,10 +210,26 @@ class TreeView extends ScrollView
     @width(1) # Shrink to measure the minimum width of list
     @width(@list.outerWidth())
 
+  loadIgnoredPatterns: ->
+    @ignoredPatterns.length = 0
+    return unless atom.config.get('tree-view.hideIgnoredNames')
+
+    Minimatch ?= require('minimatch').Minimatch
+
+    ignoredNames = atom.config.get('core.ignoredNames') ? []
+    ignoredNames = [ignoredNames] if typeof ignoredNames is 'string'
+    for ignoredName in ignoredNames when ignoredName
+      try
+        @ignoredPatterns.push(new Minimatch(ignoredName, matchBase: true, dot: true))
+      catch error
+        console.warn "Error parsing ignore pattern (#{ignoredName}): #{error.message}"
+
   updateRoot: (expandedEntries={}) ->
     if @root?
       @root.directory.destroy()
       @root.remove()
+
+    @loadIgnoredPatterns()
 
     if projectPath = atom.project.getPath()
       directory = new Directory({
@@ -218,6 +239,7 @@ class TreeView extends ScrollView
         isRoot: true
         expandedEntries
         isExpanded: true
+        @ignoredPatterns
       })
       @root = new DirectoryView()
       @root.initialize(directory)
