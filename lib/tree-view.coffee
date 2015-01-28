@@ -105,6 +105,10 @@ class TreeView extends View
      'tree-view:collapse-directory': => @collapseDirectory()
      'tree-view:recursive-collapse-directory': => @collapseDirectory(true)
      'tree-view:open-selected-entry': => @openSelectedEntry(true)
+     'tree-view:open-selected-entry-right': => @openSelectedEntryRight()
+     'tree-view:open-selected-entry-left': => @openSelectedEntryLeft()
+     'tree-view:open-selected-entry-up': => @openSelectedEntryUp()
+     'tree-view:open-selected-entry-down': => @openSelectedEntryDown()
      'tree-view:move': => @moveSelectedEntry()
      'tree-view:copy': => @copySelectedEntries()
      'tree-view:cut': => @cutSelectedEntries()
@@ -116,6 +120,10 @@ class TreeView extends View
      'tool-panel:unfocus': => @unfocus()
      'tree-view:toggle-vcs-ignored-files': -> toggleConfig 'tree-view.hideVcsIgnoredFiles'
      'tree-view:toggle-ignored-names': -> toggleConfig 'tree-view.hideIgnoredNames'
+
+    [0..8].forEach (index) =>
+      atom.commands.add @element, "tree-view:open-selected-entry-in-pane-#{index + 1}", =>
+        @openSelectedEntryInPane index
 
     @disposables.add atom.workspace.onDidChangeActivePaneItem =>
       @selectActiveFile()
@@ -129,6 +137,8 @@ class TreeView extends View
       @updateRoot() if atom.config.get('tree-view.hideIgnoredNames')
     @disposables.add atom.config.onDidChange 'tree-view.showOnRightSide', ({newValue}) =>
       @onSideToggled(newValue)
+    @disposables.add atom.config.onDidChange 'tree-view.sortFoldersBeforeFiles', =>
+      @updateRoot()
 
   toggle: ->
     if @isVisible()
@@ -352,6 +362,34 @@ class TreeView extends View
     else if selectedEntry instanceof FileView
       atom.workspace.open(selectedEntry.getPath(), {activatePane})
 
+  openSelectedEntrySplit: (orientation, side) ->
+    selectedEntry = @selectedEntry()
+    pane = atom.workspace.getActivePane()
+    if pane and selectedEntry instanceof FileView
+      if atom.workspace.getActivePaneItem()
+        split = pane.split orientation, side
+        atom.workspace.openURIInPane selectedEntry.getPath(), split
+      else
+        @openSelectedEntry yes
+
+  openSelectedEntryRight: ->
+    @openSelectedEntrySplit 'horizontal', 'after'
+
+  openSelectedEntryLeft: ->
+    @openSelectedEntrySplit 'horizontal', 'before'
+
+  openSelectedEntryUp: ->
+    @openSelectedEntrySplit 'vertical', 'before'
+
+  openSelectedEntryDown: ->
+    @openSelectedEntrySplit 'vertical', 'after'
+
+  openSelectedEntryInPane: (index) ->
+    selectedEntry = @selectedEntry()
+    pane = atom.workspace.getPanes()[index]
+    if pane and selectedEntry instanceof FileView
+      atom.workspace.openURIInPane selectedEntry.getPath(), pane
+
   moveSelectedEntry: ->
     if @hasFocus()
       entry = @selectedEntry()
@@ -379,10 +417,7 @@ class TreeView extends View
         label: 'Finder'
         args: ['-R', pathToOpen]
       when 'win32'
-        if isFile
-          args = ["/select,#{pathToOpen}"]
-        else
-          args = ["/root,#{pathToOpen}"]
+        args = ["/select,#{pathToOpen}"]
 
         if process.env.SystemRoot
           command = path.join(process.env.SystemRoot, 'explorer.exe')
