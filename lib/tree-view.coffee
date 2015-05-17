@@ -68,8 +68,8 @@ class TreeView extends View
 
   serialize: ->
     directoryExpansionStates: new ((roots) ->
-        @[root.directory.path] = root.directory.serializeExpansionState() for root in roots
-        this)(@roots)
+      @[root.directory.path] = root.directory.serializeExpansionState() for root in roots
+      this)(@roots)
     selectedPath: @selectedEntry()?.getPath()
     hasFocus: @hasFocus()
     attached: @panel?
@@ -122,7 +122,7 @@ class TreeView extends View
      'tool-panel:unfocus': => @unfocus()
      'tree-view:toggle-vcs-ignored-files': -> toggleConfig 'tree-view.hideVcsIgnoredFiles'
      'tree-view:toggle-ignored-names': -> toggleConfig 'tree-view.hideIgnoredNames'
-     'tree-view:remove-root-folder': (e) => @removeRootFolder(e)
+     'tree-view:remove-project-folder': (e) => @removeProjectFolder(e)
 
     [0..8].forEach (index) =>
       atom.commands.add @element, "tree-view:open-selected-entry-in-pane-#{index + 1}", =>
@@ -605,11 +605,7 @@ class TreeView extends View
       false
     dialog.attach()
 
-  addRootFolder: ->
-    atom.pickFolder (selectedPaths = []) ->
-      atom.project.addPath(selectedPath) for selectedPath in selectedPaths
-
-  removeRootFolder: (e) ->
+  removeProjectFolder: (e) ->
     pathToRemove = $(e.target).closest(".project-root > .header").find(".name").data("path")
 
     # TODO: remove this conditional once the addition of Project::removePath

@@ -33,18 +33,20 @@
     {'label': 'Paste', 'command': 'tree-view:paste'}
     {'type': 'separator'}
 
-    {'label': 'Split Up', 'command': 'tree-view:open-selected-entry-up'}
-    {'label': 'Split Down', 'command': 'tree-view:open-selected-entry-down'}
-    {'label': 'Split Left', 'command': 'tree-view:open-selected-entry-left'}
-    {'label': 'Split Right', 'command': 'tree-view:open-selected-entry-right'}
-    {'type': 'separator'}
-
-    {'label': 'Add Root Folder', 'command': 'tree-view:add-root-folder'}
+    {'label': 'Add Project Folder', 'command': 'application:add-project-folder'}
     {'type': 'separator'}
 
     {'label': 'Copy Full Path', 'command': 'tree-view:copy-full-path'}
     {'label': 'Copy Project Path', 'command': 'tree-view:copy-project-path'}
     {'label': 'Open In New Window', 'command': 'tree-view:open-in-new-window'}
+  ]
+  
+  '.tree-view.full-menu [is="tree-view-file"]': [
+    {'label': 'Split Up', 'command': 'tree-view:open-selected-entry-up'}
+    {'label': 'Split Down', 'command': 'tree-view:open-selected-entry-down'}
+    {'label': 'Split Left', 'command': 'tree-view:open-selected-entry-left'}
+    {'label': 'Split Right', 'command': 'tree-view:open-selected-entry-right'}
+    {'type': 'separator'}
   ]
 
   '.tree-view.full-menu .project-root > .header': [
@@ -60,14 +62,8 @@
     {'label': 'Paste', 'command': 'tree-view:paste'}
     {'type': 'separator'}
 
-    {'label': 'Split Up', 'command': 'tree-view:open-selected-entry-up'}
-    {'label': 'Split Down', 'command': 'tree-view:open-selected-entry-down'}
-    {'label': 'Split Left', 'command': 'tree-view:open-selected-entry-left'}
-    {'label': 'Split Right', 'command': 'tree-view:open-selected-entry-right'}
-    {'type': 'separator'}
-
-    {'label': 'Add Root Folder', 'command': 'tree-view:add-root-folder'}
-    {'label': 'Remove Root Folder', 'command': 'tree-view:remove-root-folder'}
+    {'label': 'Add Project Folder', 'command': 'application:add-project-folder'}
+    {'label': 'Remove Project Folder', 'command': 'tree-view:remove-project-folder'}
     {'type': 'separator'}
 
     {'label': 'Copy Full Path', 'command': 'tree-view:copy-full-path'}
@@ -94,10 +90,10 @@
     {'label': 'Paste', 'command': 'tree-view:paste'}
   ]
 
-  'atom-pane .item-views': [
+  'atom-pane[data-active-item-path] .item-views': [
     {'label': 'Reveal in Tree View', 'command': 'tree-view:reveal-active-file'}
   ]
 
-  'atom-pane .tab.active': [
+  'atom-pane[data-active-item-path] .tab.active': [
     {'label': 'Reveal in Tree View', 'command': 'tree-view:reveal-active-file'}
   ]
